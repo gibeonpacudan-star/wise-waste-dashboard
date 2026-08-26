@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Anomaly Detector | Solid Waste Forecast</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+</head>
+<body>
+  <nav class="navbar">
+    <a href="index.html" class="navbar-brand">Waste<span>Forecast</span></a>
+    <button class="nav-toggle" aria-label="Toggle menu">☰</button>
+    <ul class="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="prediction.html">Prediction</a></li>
+      <li><a href="seasonality.html">Seasonality</a></li>
+      <li><a href="compare.html">Compare Barangay</a></li>
+      <li><a href="anomaly.html" class="active">Anomaly Detector</a></li>
+      <li><a href="about.html">About</a></li>
+      <li><a href="contact.html">Contact</a></li>
+    </ul>
+  </nav>
+
+  <div class="container">
+    <div class="page-header">
+      <h1>Anomaly Detector</h1>
+      <p>Detect unusual deviations in waste generation patterns — real data</p>
+    </div>
+
+    <div class="filters">
+      <div class="filter-group">
+        <label>Barangay</label>
+        <select id="filterBarangay"><option value="All">All</option></select>
+      </div>
+      <div class="filter-group">
+        <label>Year</label>
+        <select id="filterYear"><option value="All">All</option></select>
+      </div>
+      <div class="filter-group">
+        <label>Month</label>
+        <select id="filterMonth"><option value="All">All</option></select>
+      </div>
+      <div class="filter-group">
+        <label>Waste Type</label>
+        <select id="filterWasteType"><option value="All">All</option></select>
+      </div>
+      <div class="filter-group" style="align-self:flex-end">
+        <button id="resetFilters" class="btn btn-outline" type="button">Reset Filters</button>
+      </div>
+    </div>
+
+    <div class="content-grid" style="grid-template-columns: 1fr 1.2fr 1fr 1fr; margin-top:1rem;">
+      <div style="display: flex; flex-direction: column; gap: 1rem;">
+        <div class="kpi-card" style="text-align: left;">
+          <div class="kpi-label">YEARLY STATUS</div>
+          <div style="font-size: 1.25rem; font-weight: 700; margin: 0.75rem 0;" id="yearlyStatus">—</div>
+          <div class="kpi-label">Yearly Trend Status</div>
+        </div>
+        <div class="kpi-card" style="text-align: left;">
+          <div class="kpi-label">MONTHLY STATUS</div>
+          <div style="font-size: 1.25rem; font-weight: 700; margin: 0.75rem 0;" id="monthlyStatus">—</div>
+          <div class="kpi-label">Monthly Status</div>
+        </div>
+      </div>
+
+      <div class="chart-card">
+        <h3>Yearly Waste Comparison</h3>
+        <div class="chart-container"><canvas id="yearlyCompareChart"></canvas></div>
+      </div>
+
+      <div class="chart-card">
+        <h3>Monthly Waste (Actual vs Expected)</h3>
+        <div class="chart-container"><canvas id="monthlyDeviationChart"></canvas></div>
+      </div>
+
+      <div class="chart-card">
+        <h3>Yearly Totals</h3>
+        <div class="chart-container"><canvas id="yearlyDeviationChart"></canvas></div>
+      </div>
+    </div>
+
+    <div class="two-col" style="margin-top: 1rem;">
+      <div class="chart-card">
+        <h3>Total Waste and Expected Monthly Waste</h3>
+        <div class="chart-container" style="height: 280px;">
+          <canvas id="actualVsExpectedChart"></canvas>
+        </div>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 1rem;">
+        <div class="table-card" style="flex: 1;">
+          <h3>Detected Anomalies</h3>
+          <div class="table-scroll" style="max-height: 320px;">
+            <table>
+              <thead>
+                <tr>
+                  <th>Year</th>
+                  <th>Month</th>
+                  <th>Actual (kg)</th>
+                  <th>Expected (kg)</th>
+                  <th>Difference (kg)</th>
+                  <th>Change %</th>
+                  <th>Status</th>
+                  <th>Baseline</th>
+                  <th>Samples</th>
+                </tr>
+              </thead>
+              <tbody id="anomalyTableBody"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="anomaly-card">
+          <h3>ANOMALY STATUS</h3>
+          <div class="anomaly-status" id="anomalyStatusCard">—</div>
+          <p style="color: var(--text-secondary); font-size: 0.9rem;" id="anomalyDetail">Based on best-available baseline</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer><p>© 2026 Solid Waste Forecast Dashboard — Real Data</p></footer>
+
+  <script src="script.js"></script>
+  <script>
+    async function fetchFullData() {
+      return await Dashboard.fetchServerData({ year: 'All', month: 'All', month_no: 'All', barangay: 'All', wasteType: 'All' }).catch(()=>null);
+    }
+
+    function normalizeRows(fullRaw) {
+      const rawRows = fullRaw && (fullRaw.monthly_by_barangay || fullRaw.table_rows || fullRaw.monthly_data || fullRaw.monthly || []) || [];
+      return (rawRows || []).map(r => ({
+        barangay: (r.barangay || r.Barangay || r.brgy || 'All'),
+        year: r.year,
+        month: r.month,
+        month_no: r.month_no,
+        waste_type: (r.waste_type || r.type || 'All'),
+        total: Number(r.total || r.total_kg || 0)
+      }));
+    }
+
+    function meanStd(vals) {
+      const a = (vals||[]).filter(x=>typeof x === 'number' && !isNaN(x));
+      if (!a.length) return { n:0, mean:null, std:null };
+      const n = a.length; const sum = a.reduce((s,v)=>s+v,0); const mean = sum / n;
+      if (n === 1) return { n, mean, std: null };
+      const variance = a.reduce((s,v)=>s+Math.pow(v-mean,2),0) / n; const std = Math.sqrt(variance);
+      return { n, mean, std };
+    }
+
+    function formatNum(n) {
+      return (n === null || n === undefined || isNaN(n)) ? 'N/A' : n.toLocaleString(undefined,{maximumFractionDigits:1});
+    }
+
+    // Collect baseline values per levels defined
+    function collectBaseline(normRows, level, sel) {
+      const b = sel.barangay; const y = String(sel.year); const m = sel.month; const wt = sel.wasteType || 'All';
+      let vals = [];
+      if (level === 1) {
+        // Same barangay + same month + same wasteType across other years (exclude selected year)
+        const rows = normRows.filter(r => String(r.barangay) === String(b) && String(r.month) === String(m));
+        const byYear = {};
+        rows.forEach(r => {
+          const yr = String(r.year);
+          if (yr === y) return;
+          byYear[yr] = byYear[yr] || 0;
+          if (!wt || wt === 'All') byYear[yr] += Number(r.total||0);
+          else if (String(r.waste_type) === String(wt)) byYear[yr] += Number(r.total||0);
+        });
+        vals = Object.keys(byYear).map(k => byYear[k]);
+      } else if (level === 2) {
+        // Same barangay + same year + same wasteType across other months (exclude selected month)
+        const rows = normRows.filter(r => String(r.barangay) === String(b) && String(r.year) === String(y));
+        const byMonth = {};
+        rows.forEach(r => {
+          if (String(r.month) === String(m)) return;
+          const key = r.month + '|' + (r.month_no||0);
+          if (!wt || wt === 'All') byMonth[key] = (byMonth[key]||0) + Number(r.total||0);
+          else if (String(r.waste_type) === String(wt)) byMonth[key] = (byMonth[key]||0) + Number(r.total||0);
+        });
+        vals = Object.keys(byMonth).map(k => byMonth[k]);
+      } else if (level === 3) {
+        // Same barangay + same wasteType across all months/years
+        const rows = normRows.filter(r => String(r.barangay) === String(b));
+        const byPeriod = {};
+        rows.forEach(r => {
+          const key = String(r.year) + '|' + r.month + '|' + (r.month_no||0);
+          if (!wt || wt === 'All') byPeriod[key] = (byPeriod[key]||0) + Number(r.total||0);
+          else if (String(r.waste_type) === String(wt)) byPeriod[key] = (byPeriod[key]||0) + Number(r.total||0);
+        });
+        vals = Object.keys(byPeriod).map(k => byPeriod[k]);
+      } else if (level === 4) {
+        // Same barangay across all months/years (all waste types)
+        const rows = normRows.filter(r => String(r.barangay) === String(b));
+        const byPeriod = {};
+        rows.forEach(r => {
+          const key = String(r.year) + '|' + r.month + '|' + (r.month_no||0);
+          byPeriod[key] = (byPeriod[key]||0) + Number(r.total||0);
+        });
+        vals = Object.keys(byPeriod).map(k => byPeriod[k]);
+      } else if (level === 5) {
+        // Overall monthly waste across complete dataset (aggregate by year+month)
+        const byPeriod = {};
+        normRows.forEach(r => {
+          const key = String(r.year) + '|' + r.month + '|' + (r.month_no||0);
+          byPeriod[key] = (byPeriod[key]||0) + Number(r.total||0);
+        });
+        vals = Object.keys(byPeriod).map(k => byPeriod[k]);
+      }
+      return vals;
+    }
+
+    function findActualFromNorm(normRows, sel) {
+      const b = sel.barangay; const y = String(sel.year); const m = sel.month; const wt = sel.wasteType || 'All';
+      // if month = All, return null (not single record)
+      if (!m || m === 'All') return null;
+      const matches = normRows.filter(r => String(r.barangay) === String(b) && String(r.year) === String(y) && String(r.month) === String(m));
+      if (!matches || matches.length === 0) return null;
+      if (!wt || wt === 'All') {
+        // prefer an aggregate waste_type 'All' row
+        const agg = matches.find(r => !r.waste_type || String(r.waste_type) === 'All');
+        if (agg) return agg.total;
+        return matches.reduce((s,r)=>s + Number(r.total||0), 0);
+      } else {
+        const wtMatch = matches.find(r => String(r.waste_type) === String(wt));
+        if (wtMatch) return wtMatch.total;
+        return null;
+      }
+    }
+
+    // Main compute and render
+    async function computeAnomaliesAndRender() {
+      if (typeof Dashboard === 'undefined' || !Dashboard.fetchServerData) return;
+      const filters = Dashboard.filters || {};
+      console.log('ANOMALY FILTERS:', filters);
+
+      // fetch full data only once
+      const full = await fetchFullData();
+      if (!full) return;
+      const fullRaw = full.raw || full;
+      console.log('ANOMALY FULL DATA:', fullRaw);
+      const normRows = normalizeRows(fullRaw);
+
+      // also fetch filtered for charts and summary KPIs
+      const filtered = await Dashboard.fetchServerData(filters).catch(()=>null);
+      const k = (filtered && filtered.kpis) ? filtered.kpis : {};
+      const monthly = (filtered && filtered.monthly) ? filtered.monthly : [];
+
+      // draw summary charts (reuse existing patterns)
+      Dashboard.destroyChart('yearlyCompare', document.getElementById('yearlyCompareChart'));
+      Dashboard.charts.yearlyCompare = new Chart(document.getElementById('yearlyCompareChart'), { type: 'bar', data: { labels:['2025','2026'], datasets:[{ label:'Yearly Waste', data:[k.total_2025||0,k.total_2026||0], backgroundColor:['#3b82f6','#6366f1'] }] }, options:{ responsive:true, maintainAspectRatio:false, plugins:{ legend:{ display:false } }, scales:{ y:{ beginAtZero:true, ticks:{ callback: v => formatKg(v) } } } } });
+
+      Dashboard.destroyChart('monthlyDev', document.getElementById('monthlyDeviationChart'));
+      Dashboard.charts.monthlyDev = new Chart(document.getElementById('monthlyDeviationChart'), { type:'line', data:{ labels: monthly.map(m=>m.month.substring(0,3)+' '+m.year), datasets:[{ label:'Actual', data: monthly.map(m=>m.total), borderColor:'#3b82f6', tension:0.2, pointRadius:3 }] }, options:{ responsive:true, maintainAspectRatio:false, scales:{ y:{ beginAtZero:true, ticks:{ callback: v => formatKg(v) } } } } });
+
+      Dashboard.destroyChart('yearlyDev', document.getElementById('yearlyDeviationChart'));
+      Dashboard.charts.yearlyDev = new Chart(document.getElementById('yearlyDeviationChart'), { type:'bar', data:{ labels:['2025','2026 (so far)','2026 Pred'], datasets:[{ label:'kg', data:[k.total_2025||0,k.total_2026||0,k.pred_2026_annual||0], backgroundColor:['#3b82f6','#6366f1','#22c55e'] }] }, options:{ responsive:true, maintainAspectRatio:false, plugins:{ legend:{ display:false } }, scales:{ y:{ beginAtZero:true, ticks:{ callback: v => formatKg(v) } } } } });
+
+      Dashboard.destroyChart('actualExpected', document.getElementById('actualVsExpectedChart'));
+      Dashboard.charts.actualExpected = new Chart(document.getElementById('actualVsExpectedChart'), { type:'line', data:{ labels: monthly.map(m=>m.month+' '+m.year), datasets:[ { label:'Total Waste', data: monthly.map(m=>m.total), borderColor:'#3b82f6' }, { label:'Expected Monthly Waste', data: monthly.map(m=>m.expected||0), borderColor:'#6366f1' } ] }, options:{ responsive:true, maintainAspectRatio:false, scales:{ y:{ beginAtZero:true, ticks:{ callback: v => formatKg(v) } } } } });
+
+      // compute
+      const sel = { barangay: filters.barangay || 'All', year: filters.year || 'All', month: filters.month || 'All', wasteType: filters.wasteType || 'All' };
+      const tbody = document.getElementById('anomalyTableBody');
+      const statusCard = document.getElementById('anomalyStatusCard');
+      const detailEl = document.getElementById('anomalyDetail');
+      tbody.innerHTML = '';
+
+      // function to compute baselineInfo object per spec
+      function computeBaselineInfo(normRows, sel) {
+        const levels = [
+          { id:1, desc: 'Same Barangay + Same Month + Same Waste Type (other years)' },
+          { id:2, desc: 'Same Barangay + Same Year + Same Waste Type (other months)' },
+          { id:3, desc: 'Same Barangay + Same Waste Type (all months/years)' },
+          { id:4, desc: 'Same Barangay (all waste types, all months/years)' },
+          { id:5, desc: 'Overall monthly across dataset' }
+        ];
+        for (const L of levels) {
+          const vals = collectBaseline(normRows, L.id, sel);
+          if (vals && vals.length > 0) {
+            const s = meanStd(vals);
+            return { level: L.id, description: L.desc, samples: s.n, values: vals, mean: s.mean, std: s.std };
+          }
+        }
+        return { level: null, description: null, samples: 0, values: [], mean: null, std: null };
+      }
+
+      if (sel.barangay && sel.barangay !== 'All' && sel.year && sel.year !== 'All' && sel.month && sel.month !== 'All') {
+        // single record case
+        const actual = findActualFromNorm(normRows, sel);
+        console.log('ANOMALY ACTUAL:', actual);
+        if (actual === null || actual === undefined) {
+          tbody.innerHTML = '<tr><td colspan="9" style="text-align:center;">Selected record not found in full dataset</td></tr>';
+          statusCard.textContent = 'INSUFFICIENT DATA'; statusCard.className = 'anomaly-status none';
+          detailEl.textContent = 'Selected barangay/year/month combination not present in the full dataset.';
+          console.log('ANOMALY RESULT: actual record not found for', sel);
+          return;
+        }
+
+        const baselineInfo = computeBaselineInfo(normRows, sel);
+        console.log('ANOMALY BASELINE:', baselineInfo);
+
+        if (!baselineInfo || baselineInfo.samples === 0) {
+          tbody.innerHTML = '<tr><td colspan="9" style="text-align:center;">INSUFFICIENT DATA</td></tr>';
+          statusCard.textContent = 'INSUFFICIENT DATA'; statusCard.className = 'anomaly-status none';
+          detailEl.textContent = 'No numerical baseline found in dataset.';
+          console.log('ANOMALY RESULT: insufficient baseline for', sel);
+          return;
+        }
+
+        const mean = baselineInfo.mean; const std = baselineInfo.std; const diff = actual - mean;
+        let deviationPct = null; let isAnom = false;
+        if (mean === 0) {
+          deviationPct = null; isAnom = actual !== 0;
+        } else {
+          deviationPct = (diff / mean) * 100;
+          if (Math.abs(deviationPct) >= 50) isAnom = true;
+          if (!isAnom && std !== null && Math.abs(actual - mean) > 2 * std) isAnom = true;
+        }
+
+        const result = {
+          status: isAnom ? 'ANOMALY DETECTED' : 'NORMAL',
+          barangay: sel.barangay, year: sel.year, month: sel.month, wasteType: sel.wasteType,
+          actual, expected: Math.round(mean*10)/10, difference: Math.round(diff*10)/10, deviation_pct: deviationPct===null?null:Math.round(deviationPct*10)/10,
+          baselineInfo
+        };
+        console.log('ANOMALY RESULT:', result);
+
+        // render single row
+        statusCard.textContent = result.status; statusCard.className = 'anomaly-status ' + (result.status === 'ANOMALY DETECTED' ? 'anomaly' : 'none');
+        statusCard.style.color = result.status === 'ANOMALY DETECTED' ? '#ef4444' : '#22c55e';
+        detailEl.textContent = `${result.barangay} — ${result.month} ${result.year} • Waste Type: ${result.wasteType || 'All'}`;
+        tbody.innerHTML = `<tr><td>${result.year}</td><td>${result.month}</td><td>${formatNum(result.actual)}</td><td>${formatNum(result.expected)}</td><td>${formatNum(result.difference)}</td><td>${result.deviation_pct===null?'N/A':(result.deviation_pct>0?'+':'')+result.deviation_pct+'%'}</td><td style="color:${result.status==='ANOMALY DETECTED'?'#ef4444':'#22c55e'}">${result.status}</td><td>${result.baselineInfo.description}</td><td>${result.baselineInfo.samples}</td></tr>`;
+
+      } else {
+        // Multi-month / broader selection: build rows from normRows filtered by slicers
+        const rowsToCheck = normRows.filter(r => {
+          if (sel.barangay && sel.barangay !== 'All' && String(r.barangay) !== String(sel.barangay)) return false;
+          if (sel.year && sel.year !== 'All' && String(r.year) !== String(sel.year)) return false;
+          if (sel.wasteType && sel.wasteType !== 'All' && String(r.waste_type) !== String(sel.wasteType)) return false;
+          return true;
+        });
+
+        if (!rowsToCheck.length) {
+          tbody.innerHTML = '<tr><td colspan="9" style="text-align:center;">No data available for selected filters</td></tr>';
+          statusCard.textContent = 'NO DATA'; statusCard.className = 'anomaly-status none'; detailEl.textContent = '';
+          return;
+        }
+
+        // aggregate by year+month+barangay+waste_type
+        const periods = {};
+        rowsToCheck.forEach(r => {
+          const key = `${r.year}|${r.month}|${r.barangay}|${r.waste_type}`;
+          periods[key] = periods[key] || { year: r.year, month: r.month, barangay: r.barangay, wasteType: r.waste_type, total: 0 };
+          periods[key].total += Number(r.total||0);
+        });
+
+        const list = Object.values(periods).sort((a,b)=> (a.year - b.year) || ((a.month_no||0) - (b.month_no||0)) );
+        tbody.innerHTML = '';
+
+        for (const p of list) {
+          const selRow = { barangay: p.barangay, year: p.year, month: p.month, wasteType: (sel.wasteType && sel.wasteType !== 'All') ? sel.wasteType : p.wasteType || 'All' };
+          const baselineInfo = computeBaselineInfo(normRows, selRow);
+          const mean = baselineInfo.mean; const std = baselineInfo.std; const actual = Number(p.total||0);
+          let deviationPct = null; let isAnom = false;
+          if (baselineInfo.samples === 0) {
+            // no baseline -> mark N/A
+            tbody.innerHTML += `<tr><td>${p.year}</td><td>${p.month}</td><td>${formatNum(actual)}</td><td>N/A</td><td>N/A</td><td>N/A</td><td>N/A</td><td>N/A</td><td>0</td></tr>`;
+            continue;
+          }
+          if (mean === 0) { deviationPct = null; isAnom = actual !== 0; }
+          else { deviationPct = ((actual - mean)/mean) * 100; if (Math.abs(deviationPct) >= 50) isAnom = true; if (!isAnom && std !== null && Math.abs(actual - mean) > 2 * std) isAnom = true; }
+          const status = isAnom ? 'ANOMALY DETECTED' : 'NORMAL';
+          tbody.innerHTML += `<tr><td>${p.year}</td><td>${p.month}</td><td>${formatNum(actual)}</td><td>${formatNum(Math.round(mean*10)/10)}</td><td>${formatNum(Math.round((actual-mean)*10)/10)}</td><td>${deviationPct===null?'N/A':(deviationPct>0?'+':'')+Math.round(deviationPct*10)/10+'%'}</td><td style="color:${status==='ANOMALY DETECTED'?'#ef4444':'#22c55e'}">${status}</td><td>${baselineInfo.description}</td><td>${baselineInfo.samples}</td></tr>`;
+        }
+        statusCard.textContent = 'MULTI'; statusCard.className = 'anomaly-status none'; detailEl.textContent = 'Showing anomaly checks for available months/periods';
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', async () => {
+      if (typeof Dashboard !== 'undefined') {
+        try { Dashboard.refreshFilterOptions(); } catch(e){}
+        Dashboard.emitUpdate();
+      }
+      // initial run and also run when filters change
+      await computeAnomaliesAndRender();
+      ['filterBarangay','filterYear','filterMonth','filterWasteType'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.addEventListener('change', async () => { setTimeout(computeAnomaliesAndRender, 10); });
+      });
+    });
+  </script>
+</body>
+</html>

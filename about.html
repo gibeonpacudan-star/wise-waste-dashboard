@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>About | Solid Waste Forecast Dashboard</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <nav class="navbar">
+    <a href="index.html" class="navbar-brand">Waste<span>Forecast</span></a>
+    <button class="nav-toggle" aria-label="Toggle menu">☰</button>
+    <ul class="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="prediction.html">Prediction</a></li>
+      <li><a href="seasonality.html">Seasonality</a></li>
+      <li><a href="compare.html">Compare Barangay</a></li>
+      <li><a href="anomaly.html">Anomaly Detector</a></li>
+      <li><a href="about.html" class="active">About</a></li>
+      <li><a href="contact.html">Contact</a></li>
+    </ul>
+  </nav>
+
+  <div class="container">
+    <div class="page-header">
+      <h1>About This Project</h1>
+      <p>Understanding the Solid Waste Forecast &amp; Analytics Platform</p>
+    </div>
+
+    <div class="about-content">
+      <h2>Project Overview</h2>
+      <p>
+        This dashboard is an example web application that demonstrates forecasting and analysis of solid waste generation 
+        across barangays (local communities). It provides interactive visualizations for waste volume predictions, 
+        seasonal patterns, comparative analysis, and anomaly detection.
+      </p>
+      <p>
+        The original concept is inspired by Power BI-style analytical dashboards used by local government units 
+        and environmental agencies to plan waste collection, recycling programs, and landfill capacity.
+      </p>
+
+      <h2>Key Objectives</h2>
+      <p><strong>1. Prediction Data</strong> — Forecast total solid waste and breakdown by waste type (Biodegradable, Recyclable, Residual, Special, etc.) for the next month and full year. Track forecast error, accuracy, and trend direction (Rising / Falling).</p>
+      <p><strong>2. Seasonality Data</strong> — Analyze monthly seasonality indices, identify peak waste months, average monthly waste, and highest-generating barangays and waste types.</p>
+      <p><strong>3. Compare Barangay</strong> — Compare 2025 historical totals against 2026 predicted totals per barangay. Visualize monthly waste trends across years.</p>
+      <p><strong>4. Anomaly Detector</strong> — Detect unusual deviations from expected monthly waste levels. Review yearly and monthly status, deviation percentages, and flagged anomalies.</p>
+
+      <h2>Waste Types Tracked</h2>
+      <ul style="color: var(--text-secondary); margin-left: 1.5rem; margin-bottom: 1.5rem;">
+        <li>Biodegradable</li>
+        <li>Recyclable</li>
+        <li>Recyclable / Residual</li>
+        <li>Residual</li>
+        <li>Residual / Biodegradable</li>
+        <li>Special</li>
+      </ul>
+
+      <h2>Technology</h2>
+      <p>
+        This example website is built entirely with <strong>HTML</strong>, <strong>CSS</strong>, and <strong>JavaScript</strong>. 
+        Charts are rendered using Chart.js. Data is sourced from the cleaned All Data sheet of the municipal waste records.
+      </p>
+
+      <h2>Disclaimer</h2>
+      <p>
+        This is a front-end demonstration only. No real forecasting models or live data connections are implemented. 
+        Numbers, trends, and anomaly flags are static examples designed to match the look and feel of a professional analytics dashboard.
+      </p>
+    </div>
+  </div>
+
+  <footer>
+    <p>© 2026 Solid Waste Forecast Dashboard — Example Demo Website</p>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>

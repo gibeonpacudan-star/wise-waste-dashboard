@@ -1,0 +1,13 @@
+# Example Render service definition — optional. You can also deploy via the Render dashboard by connecting your GitHub repo.
+# See https://render.com/docs/deploy-a-dockerfile
+services:
+  - type: web
+    name: weise-waste-dashboard
+    env: docker
+    branch: main
+    plan: free
+    dockerfilePath: ./Dockerfile
+    autoDeploy: true
+    envVars:
+      - key: PORT
+        value: "3000"

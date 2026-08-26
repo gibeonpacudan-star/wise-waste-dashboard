@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Solid Waste Forecast Dashboard | Home</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <nav class="navbar">
+    <a href="index.html" class="navbar-brand">Waste<span>Forecast</span></a>
+    <button class="nav-toggle" aria-label="Toggle menu">☰</button>
+    <ul class="nav-links">
+      <li><a href="index.html" class="active">Home</a></li>
+      <li><a href="prediction.html">Prediction</a></li>
+      <li><a href="seasonality.html">Seasonality</a></li>
+      <li><a href="compare.html">Compare Barangay</a></li>
+      <li><a href="anomaly.html">Anomaly Detector</a></li>
+      <li><a href="about.html">About</a></li>
+      <li><a href="contact.html">Contact</a></li>
+    </ul>
+  </nav>
+
+  <section class="hero">
+    <h1>Solid Waste &amp; Waste Type <span>Forecast</span></h1>
+    <p>Advanced analytics platform for forecasting solid waste generation per barangay. Monitor trends, detect anomalies, analyze seasonality, and compare performance across communities.</p>
+    <a href="prediction.html" class="btn">Explore Dashboard</a>
+    <a href="about.html" class="btn btn-outline" style="margin-left: 0.75rem;">Learn More</a>
+  </section>
+
+  <div class="container">
+    <div class="features">
+      <div class="feature-card">
+        <div class="icon"></div>
+        <h3>Prediction Data</h3>
+        <p>Forecast solid waste volume and composition by waste type and barangay. View next-month predictions, accuracy metrics, and yearly/monthly trends.</p>
+        <a href="prediction.html" class="btn" style="margin-top: 1rem; font-size: 0.85rem; padding: 0.5rem 1rem;">Open</a>
+      </div>
+      <div class="feature-card">
+        <div class="icon"></div>
+        <h3>Seasonality Analysis</h3>
+        <p>Identify seasonal patterns in waste generation. Compare peak vs average months, highest waste barangays, and monthly seasonality indices.</p>
+        <a href="seasonality.html" class="btn" style="margin-top: 1rem; font-size: 0.85rem; padding: 0.5rem 1rem;">Open</a>
+      </div>
+      <div class="feature-card">
+        <div class="icon"></div>
+        <h3>Compare Barangay</h3>
+        <p>Side-by-side comparison of 2025 vs 2026 total waste by barangay. Track monthly trends and identify highest/lowest generators.</p>
+        <a href="compare.html" class="btn" style="margin-top: 1rem; font-size: 0.85rem; padding: 0.5rem 1rem;">Open</a>
+      </div>
+      <div class="feature-card">
+        <div class="icon"></div>
+        <h3>Anomaly Detector</h3>
+        <p>Detect unusual spikes or drops in waste data. Compare actual vs expected monthly waste and review yearly deviation trends.</p>
+        <a href="anomaly.html" class="btn" style="margin-top: 1rem; font-size: 0.85rem; padding: 0.5rem 1rem;">Open</a>
+      </div>
+    </div>
+
+    <div class="kpi-grid" style="margin-top: 2rem;">
+      <div class="kpi-card">
+        <div class="kpi-value neutral" id="kpi-pred-2026">—</div>
+        <div class="kpi-label">2026 Total Waste Predicted</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-value neutral" id="kpi-next-month">—</div>
+        <div class="kpi-label">Next Month Prediction</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-value neutral" id="kpi-total-2025">—</div>
+        <div class="kpi-label">2025 Total Waste</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-value" id="kpi-yearly-trend">—</div>
+        <div class="kpi-label">Yearly Trend Status</div>
+      </div>
+    </div>
+    <div id="activeFilters" style="margin-top:0.75rem;color:#ddd;font-size:0.9rem;"></div>
+  </div>
+
+  <footer>
+    <p>© 2026 Solid Waste Forecast Dashboard</p>
+    <p style="margin-top: 0.5rem; font-size: 0.8rem;">Built with HTML, CSS &amp; JavaScript • Real data from municipal records</p>
+  </footer>
+
+  <script src="script.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', async () => {
+      if (typeof Dashboard !== 'undefined') {
+        try { Dashboard.refreshFilterOptions(); } catch(e){}
+        Dashboard.emitUpdate();
+      }
+      if (typeof Dashboard !== 'undefined' && Dashboard.fetchServerData) {
+        const filtered = await Dashboard.fetchServerData(Dashboard.filters).catch(()=>null);
+        if (!filtered) return;
+        const k = filtered.kpis || {};
+        document.getElementById('kpi-pred-2026').textContent = formatKg(k.pred_2026_annual||0);
+        document.getElementById('kpi-next-month').textContent = formatKg(k.next_month_prediction||0);
+        document.getElementById('kpi-total-2025').textContent = formatKg(k.total_2025||0);
+        const trendEl = document.getElementById('kpi-yearly-trend');
+        trendEl.textContent = k.yearly_trend || '—';
+        trendEl.className = 'kpi-value ' + (k.yearly_trend === 'RISING' ? 'positive' : k.yearly_trend === 'FALLING' ? 'negative' : 'neutral');
+        // show active filters summary
+        const af = document.getElementById('activeFilters');
+        if (af) af.textContent = (Dashboard && Dashboard.filters) ? ('Filters: ' + ['barangay','year','month','wasteType'].map(k=> (Dashboard.filters[k]||'All')).join(' | ')) : '';
+      }
+    });
+  </script>
+</body>
+</html>
