@@ -52,7 +52,7 @@
 
   <nav class="navbar">
 
-```
+
 <a href="index.html" class="navbar-brand">
 
   <img
@@ -84,13 +84,13 @@
   <li><a href="about.html">About</a></li>
   <li><a href="contact.html">Contact</a></li>
 </ul>
-```
+
 
   </nav>
 
   <section class="hero">
 
-```
+
 <img
   src="logo.jpg"
   alt="Municipality of Compostela, Davao de Oro Logo"
@@ -126,7 +126,474 @@
 ```
 
   </section>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MENRO - WasteForecast | Municipality of Compostela, Davao de Oro</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
 
+    body {
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      background: #0f172a;
+      color: #e2e8f0;
+      line-height: 1.6;
+    }
+
+    /* ========== NAVBAR ========== */
+    .navbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.75rem 1.5rem;
+      background: #1e293b;
+      border-bottom: 1px solid #334155;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .navbar-brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      text-decoration: none;
+      color: #f1f5f9;
+    }
+
+    .navbar-logo {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      object-fit: cover;
+      display: block;
+      border: 2px solid #22c55e;
+    }
+
+    .logo-error {
+      display: none;
+      color: #f87171;
+      font-size: 0.85rem;
+    }
+
+    .navbar-brand strong {
+      display: block;
+      font-size: 1.1rem;
+    }
+
+    .organization-name {
+      display: block;
+      font-size: 0.75rem;
+      color: #94a3b8;
+      font-weight: 400;
+    }
+
+    .nav-toggle {
+      display: none;
+      background: none;
+      border: none;
+      color: #f1f5f9;
+      font-size: 1.5rem;
+      cursor: pointer;
+    }
+
+    .nav-links {
+      display: flex;
+      list-style: none;
+      gap: 0.5rem;
+    }
+
+    .nav-links a {
+      color: #cbd5e1;
+      text-decoration: none;
+      padding: 0.5rem 0.9rem;
+      border-radius: 0.5rem;
+      font-size: 0.95rem;
+      transition: background 0.2s, color 0.2s;
+    }
+
+    .nav-links a:hover,
+    .nav-links a.active {
+      background: #22c55e;
+      color: #0f172a;
+    }
+
+    /* ========== HERO ========== */
+    .hero {
+      text-align: center;
+      padding: 3.5rem 1.5rem 2.5rem;
+      background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%);
+    }
+
+    .hero-logo {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      object-fit: cover;
+      display: block;
+      margin: 0 auto 1.25rem;
+      border: 3px solid #22c55e;
+      box-shadow: 0 0 20px rgba(34, 197, 94, 0.3);
+    }
+
+    .hero h1 {
+      font-size: 1.75rem;
+      font-weight: 600;
+      color: #f1f5f9;
+      margin-bottom: 0.5rem;
+    }
+
+    .hero h2 {
+      font-size: 2.25rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+      color: #f8fafc;
+    }
+
+    .hero h2 span {
+      color: #22c55e;
+    }
+
+    .hero p {
+      max-width: 640px;
+      margin: 0 auto 1.75rem;
+      color: #94a3b8;
+      font-size: 1.05rem;
+    }
+
+    .btn {
+      display: inline-block;
+      background: #22c55e;
+      color: #0f172a;
+      padding: 0.7rem 1.4rem;
+      border-radius: 0.5rem;
+      text-decoration: none;
+      font-weight: 600;
+      transition: background 0.2s, transform 0.15s;
+    }
+
+    .btn:hover {
+      background: #16a34a;
+      transform: translateY(-1px);
+    }
+
+    .btn-outline {
+      background: transparent;
+      border: 2px solid #22c55e;
+      color: #22c55e;
+    }
+
+    .btn-outline:hover {
+      background: #22c55e;
+      color: #0f172a;
+    }
+
+    /* ========== FEATURES ========== */
+    .features {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 1.25rem;
+      padding: 2rem 1.5rem;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    .feature-card {
+      background: #1e293b;
+      border: 1px solid #334155;
+      border-radius: 0.75rem;
+      padding: 1.5rem;
+      transition: border-color 0.2s, transform 0.2s;
+    }
+
+    .feature-card:hover {
+      border-color: #22c55e;
+      transform: translateY(-3px);
+    }
+
+    .feature-card .icon {
+      width: 40px;
+      height: 40px;
+      background: #22c55e22;
+      border-radius: 0.5rem;
+      margin-bottom: 1rem;
+    }
+
+    .feature-card h3 {
+      font-size: 1.15rem;
+      margin-bottom: 0.5rem;
+      color: #f1f5f9;
+    }
+
+    .feature-card p {
+      color: #94a3b8;
+      font-size: 0.9rem;
+      margin-bottom: 0.5rem;
+    }
+
+    /* ========== KPI CARDS ========== */
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+      padding: 0 1.5rem 2.5rem;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    .kpi-card {
+      background: #1e293b;
+      border: 1px solid #334155;
+      border-radius: 0.75rem;
+      padding: 1.25rem;
+      text-align: center;
+    }
+
+    .kpi-value {
+      font-size: 1.75rem;
+      font-weight: 700;
+      margin-bottom: 0.35rem;
+    }
+
+    .kpi-value.neutral {
+      color: #94a3b8;
+    }
+
+    .kpi-value.positive {
+      color: #22c55e;
+    }
+
+    .kpi-value.negative {
+      color: #f87171;
+    }
+
+    .kpi-label {
+      font-size: 0.85rem;
+      color: #64748b;
+    }
+
+    #activeFilters {
+      text-align: center;
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 1.5rem;
+    }
+
+    /* ========== FOOTER ========== */
+    footer {
+      text-align: center;
+      padding: 2rem 1.5rem;
+      border-top: 1px solid #334155;
+      color: #64748b;
+      font-size: 0.9rem;
+    }
+
+    /* ========== RESPONSIVE ========== */
+    @media (max-width: 768px) {
+      .nav-toggle {
+        display: block;
+      }
+
+      .nav-links {
+        display: none;
+        flex-direction: column;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        background: #1e293b;
+        padding: 1rem;
+        border-bottom: 1px solid #334155;
+      }
+
+      .nav-links.show {
+        display: flex;
+      }
+
+      .hero h2 {
+        font-size: 1.75rem;
+      }
+
+      .hero h1 {
+        font-size: 1.35rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- =========================
+       NAVBAR
+  ========================= -->
+  <nav class="navbar">
+    <a href="index.html" class="navbar-brand">
+      <img
+        src="./logo.jpg"
+        alt="Municipality of Compostela, Davao de Oro Logo"
+        class="navbar-logo"
+        onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"
+      >
+      <span class="logo-error">Logo not found</span>
+      <span>
+        <strong>MENRO - WasteForecast</strong>
+        <small class="organization-name">
+          Municipality of Compostela, Davao de Oro
+        </small>
+      </span>
+    </a>
+
+    <button class="nav-toggle" aria-label="Toggle menu" onclick="document.querySelector('.nav-links').classList.toggle('show')">
+      ☰
+    </button>
+
+    <ul class="nav-links">
+      <li><a href="index.html" class="active">Home</a></li>
+      <li><a href="prediction.html">Prediction</a></li>
+      <li><a href="seasonality.html">Seasonality</a></li>
+      <li><a href="compare.html">Compare Barangay</a></li>
+      <li><a href="anomaly.html">Anomaly Detector</a></li>
+      <li><a href="about.html">About</a></li>
+      <li><a href="contact.html">Contact</a></li>
+    </ul>
+  </nav>
+
+  <!-- =========================
+       HERO
+  ========================= -->
+  <section class="hero">
+    <img
+      src="./logo.jpg"
+      alt="Municipality of Compostela, Davao de Oro Logo"
+      class="hero-logo"
+      onerror="this.style.display='none';"
+    >
+
+    <h1>MENRO - Municipality of Compostela, Davao de Oro</h1>
+
+    <h2>
+      Solid Waste &amp; Waste Type
+      <span>Forecast</span>
+    </h2>
+
+    <p>
+      Advanced analytics platform for forecasting solid waste generation
+      per barangay. Monitor trends, detect anomalies, analyze seasonality,
+      and compare performance across communities.
+    </p>
+
+    <a href="prediction.html" class="btn">Explore Dashboard</a>
+    <a href="about.html" class="btn btn-outline" style="margin-left: 0.75rem;">Learn More</a>
+  </section>
+
+  <!-- =========================
+       FEATURE CARDS
+  ========================= -->
+  <div class="features">
+
+    <div class="feature-card">
+      <div class="icon"></div>
+      <h3>Prediction Data</h3>
+      <p>
+        Forecast solid waste volume and composition by waste type
+        and barangay. View next-month predictions, accuracy metrics,
+        and yearly/monthly trends.
+      </p>
+      <a href="prediction.html" class="btn" style="margin-top: 1rem; font-size: 0.85rem; padding: 0.5rem 1rem;">
+        Open
+      </a>
+    </div>
+
+    <div class="feature-card">
+      <div class="icon"></div>
+      <h3>Seasonality Analysis</h3>
+      <p>
+        Identify seasonal patterns in waste generation. Compare
+        peak vs average months, highest waste barangays, and
+        monthly seasonality indices.
+      </p>
+      <a href="seasonality.html" class="btn" style="margin-top: 1rem; font-size: 0.85rem; padding: 0.5rem 1rem;">
+        Open
+      </a>
+    </div>
+
+    <div class="feature-card">
+      <div class="icon"></div>
+      <h3>Compare Barangay</h3>
+      <p>
+        Side-by-side comparison of 2025 vs 2026 total waste
+        by barangay. Track monthly trends and identify
+        highest/lowest generators.
+      </p>
+      <a href="compare.html" class="btn" style="margin-top: 1rem; font-size: 0.85rem; padding: 0.5rem 1rem;">
+        Open
+      </a>
+    </div>
+
+    <div class="feature-card">
+      <div class="icon"></div>
+      <h3>Anomaly Detector</h3>
+      <p>
+        Detect unusual spikes or drops in waste data. Compare
+        actual vs expected monthly waste and review yearly
+        deviation trends.
+      </p>
+      <a href="anomaly.html" class="btn" style="margin-top: 1rem; font-size: 0.85rem; padding: 0.5rem 1rem;">
+        Open
+      </a>
+    </div>
+
+  </div>
+
+  <!-- =========================
+       KPI CARDS
+  ========================= -->
+  <div class="kpi-grid">
+    <div class="kpi-card">
+      <div class="kpi-value neutral" id="kpi-pred-2026">—</div>
+      <div class="kpi-label">2026 Total Waste Predicted</div>
+    </div>
+
+    <div class="kpi-card">
+      <div class="kpi-value neutral" id="kpi-next-month">—</div>
+      <div class="kpi-label">Next Month Prediction</div>
+    </div>
+
+    <div class="kpi-card">
+      <div class="kpi-value neutral" id="kpi-total-2025">—</div>
+      <div class="kpi-label">2025 Total Waste</div>
+    </div>
+
+    <div class="kpi-card">
+      <div class="kpi-value neutral" id="kpi-yearly-trend">—</div>
+      <div class="kpi-label">Yearly Trend Status</div>
+    </div>
+  </div>
+
+  <!-- ACTIVE FILTERS -->
+  <div id="activeFilters" style="margin-top:0.75rem;color:#ddd;font-size:0.9rem;"></div>
+
+  <!-- =========================
+       FOOTER
+  ========================= -->
+  <footer>
+    <p>© 2026 MENRO - Municipality of Compostela, Davao de Oro</p>
+    <p style="margin-top: 0.5rem; font-size: 0.8rem;">
+      Solid Waste Forecast Dashboard • Built with HTML, CSS &amp; JavaScript • Real data from municipal records
+    </p>
+  </footer>
+
+  <script>
+    // Simple mobile menu toggle is handled inline on the button.
+    // You can later populate the KPI values from your data source.
+  </script>
+</body>
+</html>
   <div class="container">
 
 ```
