@@ -4,54 +4,37 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
   <title>MENRO - Municipality of Compostela, Davao de Oro</title>
 
   <link rel="stylesheet" href="styles.css">
 
   <style>
-    /* =========================================
-       CENTER LOGO - FORCE PERFECT CIRCLE
-       ========================================= */
-
-    .hero .hero-logo {
-      width: 150px !important;
-      height: 150px !important;
-
-      border-radius: 50% !important;
-
+    /* NAVBAR LOGO */
+    .navbar-logo {
+      width: 48px !important;
+      height: 48px !important;
       object-fit: cover !important;
-
+      border-radius: 50% !important;
       display: block !important;
-
-      margin: 0 auto 1.5rem auto !important;
-
       overflow: hidden !important;
-
-      /* Removes any square/rectangular border */
-      border: none !important;
-
-      /* Makes sure it stays circular */
-      aspect-ratio: 1 / 1 !important;
     }
 
-
-    /* =========================================
-       NAVBAR LOGO
-       ========================================= */
+    /* CENTER HERO LOGO */
+    .hero-logo {
+      width: 150px !important;
+      height: 150px !important;
+      object-fit: cover !important;
+      border-radius: 50% !important;
+      display: block !important;
+      margin: 0 auto 1rem auto !important;
+      overflow: hidden !important;
+    }
 
     .navbar-brand {
       display: flex;
       align-items: center;
       gap: 0.7rem;
       white-space: nowrap;
-      text-decoration: none;
-    }
-
-    .navbar-logo {
-      width: 48px;
-      height: 48px;
-      object-fit: contain;
     }
 
     .organization-name {
@@ -61,32 +44,19 @@
       opacity: 0.9;
       margin-top: 0.15rem;
     }
-
-
-    /* =========================================
-       HERO
-       ========================================= */
-
-    .hero {
-      text-align: center;
-    }
   </style>
 
 </head>
 
 <body>
 
-  <!-- =========================================
-       NAVBAR
-       ========================================= -->
-
   <nav class="navbar">
 
-
+```
 <a href="index.html" class="navbar-brand">
 
   <img
-    src="./logo.jpg"
+    src="logo.jpg"
     alt="Municipality of Compostela, Davao de Oro Logo"
     class="navbar-logo"
   >
@@ -101,75 +71,40 @@
 
 </a>
 
-
-<button
-  class="nav-toggle"
-  aria-label="Toggle menu"
->
+<button class="nav-toggle" aria-label="Toggle menu">
   ☰
 </button>
 
-
 <ul class="nav-links">
-
-  <li>
-    <a href="index.html" class="active">Home</a>
-  </li>
-
-  <li>
-    <a href="prediction.html">Prediction</a>
-  </li>
-
-  <li>
-    <a href="seasonality.html">Seasonality</a>
-  </li>
-
-  <li>
-    <a href="compare.html">Compare Barangay</a>
-  </li>
-
-  <li>
-    <a href="anomaly.html">Anomaly Detector</a>
-  </li>
-
-  <li>
-    <a href="about.html">About</a>
-  </li>
-
-  <li>
-    <a href="contact.html">Contact</a>
-  </li>
-
+  <li><a href="index.html" class="active">Home</a></li>
+  <li><a href="prediction.html">Prediction</a></li>
+  <li><a href="seasonality.html">Seasonality</a></li>
+  <li><a href="compare.html">Compare Barangay</a></li>
+  <li><a href="anomaly.html">Anomaly Detector</a></li>
+  <li><a href="about.html">About</a></li>
+  <li><a href="contact.html">Contact</a></li>
 </ul>
-
+```
 
   </nav>
-
-  <!-- =========================================
-       HERO
-       ========================================= -->
 
   <section class="hero">
 
 ```
-<!-- CENTER LOGO -->
 <img
-  src="./logo.jpg"
+  src="logo.jpg"
   alt="Municipality of Compostela, Davao de Oro Logo"
   class="hero-logo"
 >
-
 
 <h1>
   MENRO - Municipality of Compostela, Davao de Oro
 </h1>
 
-
 <h2>
   Solid Waste &amp; Waste Type
   <span>Forecast</span>
 </h2>
-
 
 <p>
   Advanced analytics platform for forecasting solid waste generation
@@ -177,14 +112,9 @@
   and compare performance across communities.
 </p>
 
-
-<a
-  href="prediction.html"
-  class="btn"
->
+<a href="prediction.html" class="btn">
   Explore Dashboard
 </a>
-
 
 <a
   href="about.html"
@@ -197,17 +127,10 @@
 
   </section>
 
-  <!-- =========================================
-       CONTENT
-       ========================================= -->
-
   <div class="container">
 
 ```
-<!-- FEATURES -->
-
 <div class="features">
-
 
   <div class="feature-card">
 
@@ -224,17 +147,12 @@
     <a
       href="prediction.html"
       class="btn"
-      style="
-        margin-top: 1rem;
-        font-size: 0.85rem;
-        padding: 0.5rem 1rem;
-      "
+      style="margin-top: 1rem; font-size: 0.85rem; padding: 0.5rem 1rem;"
     >
       Open
     </a>
 
   </div>
-
 
 
   <div class="feature-card">
@@ -244,25 +162,20 @@
     <h3>Seasonality Analysis</h3>
 
     <p>
-      Identify seasonal patterns in waste generation.
-      Compare peak vs average months, highest waste barangays,
-      and monthly seasonality indices.
+      Identify seasonal patterns in waste generation. Compare peak
+      vs average months, highest waste barangays, and monthly
+      seasonality indices.
     </p>
 
     <a
       href="seasonality.html"
       class="btn"
-      style="
-        margin-top: 1rem;
-        font-size: 0.85rem;
-        padding: 0.5rem 1rem;
-      "
+      style="margin-top: 1rem; font-size: 0.85rem; padding: 0.5rem 1rem;"
     >
       Open
     </a>
 
   </div>
-
 
 
   <div class="feature-card">
@@ -272,25 +185,20 @@
     <h3>Compare Barangay</h3>
 
     <p>
-      Side-by-side comparison of 2025 vs 2026 total waste
-      by barangay. Track monthly trends and identify
-      highest/lowest generators.
+      Side-by-side comparison of 2025 vs 2026 total waste by
+      barangay. Track monthly trends and identify highest/lowest
+      generators.
     </p>
 
     <a
       href="compare.html"
       class="btn"
-      style="
-        margin-top: 1rem;
-        font-size: 0.85rem;
-        padding: 0.5rem 1rem;
-      "
+      style="margin-top: 1rem; font-size: 0.85rem; padding: 0.5rem 1rem;"
     >
       Open
     </a>
 
   </div>
-
 
 
   <div class="feature-card">
@@ -300,19 +208,14 @@
     <h3>Anomaly Detector</h3>
 
     <p>
-      Detect unusual spikes or drops in waste data.
-      Compare actual vs expected monthly waste and review
-      yearly deviation trends.
+      Detect unusual spikes or drops in waste data. Compare actual
+      vs expected monthly waste and review yearly deviation trends.
     </p>
 
     <a
       href="anomaly.html"
       class="btn"
-      style="
-        margin-top: 1rem;
-        font-size: 0.85rem;
-        padding: 0.5rem 1rem;
-      "
+      style="margin-top: 1rem; font-size: 0.85rem; padding: 0.5rem 1rem;"
     >
       Open
     </a>
@@ -322,98 +225,38 @@
 </div>
 
 
-
-<!-- KPI CARDS -->
-
-<div
-  class="kpi-grid"
-  style="margin-top: 2rem;"
->
+<div class="kpi-grid" style="margin-top: 2rem;">
 
   <div class="kpi-card">
-
-    <div
-      class="kpi-value neutral"
-      id="kpi-pred-2026"
-    >
-      —
-    </div>
-
-    <div class="kpi-label">
-      2026 Total Waste Predicted
-    </div>
-
+    <div class="kpi-value neutral" id="kpi-pred-2026">—</div>
+    <div class="kpi-label">2026 Total Waste Predicted</div>
   </div>
 
-
   <div class="kpi-card">
-
-    <div
-      class="kpi-value neutral"
-      id="kpi-next-month"
-    >
-      —
-    </div>
-
-    <div class="kpi-label">
-      Next Month Prediction
-    </div>
-
+    <div class="kpi-value neutral" id="kpi-next-month">—</div>
+    <div class="kpi-label">Next Month Prediction</div>
   </div>
 
-
   <div class="kpi-card">
-
-    <div
-      class="kpi-value neutral"
-      id="kpi-total-2025"
-    >
-      —
-    </div>
-
-    <div class="kpi-label">
-      2025 Total Waste
-    </div>
-
+    <div class="kpi-value neutral" id="kpi-total-2025">—</div>
+    <div class="kpi-label">2025 Total Waste</div>
   </div>
 
-
   <div class="kpi-card">
-
-    <div
-      class="kpi-value neutral"
-      id="kpi-yearly-trend"
-    >
-      —
-    </div>
-
-    <div class="kpi-label">
-      Yearly Trend Status
-    </div>
-
+    <div class="kpi-value neutral" id="kpi-yearly-trend">—</div>
+    <div class="kpi-label">Yearly Trend Status</div>
   </div>
 
 </div>
 
 
-
-<!-- ACTIVE FILTERS -->
-
 <div
   id="activeFilters"
-  style="
-    margin-top: 0.75rem;
-    color: #ddd;
-    font-size: 0.9rem;
-  "
+  style="margin-top:0.75rem;color:#ddd;font-size:0.9rem;"
 ></div>
 ```
 
   </div>
-
-  <!-- =========================================
-       FOOTER
-       ========================================= -->
 
   <footer>
 
@@ -422,140 +265,108 @@
   © 2026 MENRO - Municipality of Compostela, Davao de Oro
 </p>
 
-<p
-  style="
-    margin-top: 0.5rem;
-    font-size: 0.8rem;
-  "
->
-  Solid Waste Forecast Dashboard •
-  Built with HTML, CSS &amp; JavaScript •
-  Real data from municipal records
+<p style="margin-top: 0.5rem; font-size: 0.8rem;">
+  Solid Waste Forecast Dashboard • Built with HTML, CSS &amp;
+  JavaScript • Real data from municipal records
 </p>
 ```
 
   </footer>
 
-  <!-- =========================================
-       JAVASCRIPT
-       ========================================= -->
-
-  <script src="./script.js"></script>
+  <script src="script.js"></script>
 
   <script>
+    document.addEventListener('DOMContentLoaded', async () => {
 
-    document.addEventListener(
-      'DOMContentLoaded',
-      async () => {
+      if (typeof Dashboard !== 'undefined') {
 
-        if (typeof Dashboard !== 'undefined') {
+        try {
+          Dashboard.refreshFilterOptions();
+        } catch (e) {}
 
-          try {
-            Dashboard.refreshFilterOptions();
-          } catch (e) {}
+        try {
+          Dashboard.emitUpdate();
+        } catch (e) {}
 
-          try {
-            Dashboard.emitUpdate();
-          } catch (e) {}
+      }
 
-        }
+      if (
+        typeof Dashboard !== 'undefined' &&
+        Dashboard.fetchServerData
+      ) {
 
+        const filtered =
+          await Dashboard.fetchServerData(
+            Dashboard.filters
+          ).catch(() => null);
 
-        if (
-          typeof Dashboard !== 'undefined' &&
-          typeof Dashboard.fetchServerData === 'function'
-        ) {
+        if (!filtered) return;
 
-          const filtered =
-            await Dashboard.fetchServerData(
-              Dashboard.filters
-            ).catch(() => null);
+        const k = filtered.kpis || {};
 
+        document.getElementById(
+          'kpi-pred-2026'
+        ).textContent =
+          formatKg(k.pred_2026_annual || 0);
 
-          if (!filtered) return;
+        document.getElementById(
+          'kpi-next-month'
+        ).textContent =
+          formatKg(k.next_month_prediction || 0);
 
+        document.getElementById(
+          'kpi-total-2025'
+        ).textContent =
+          formatKg(k.total_2025 || 0);
 
-          const k = filtered.kpis || {};
-
-
+        const trendEl =
           document.getElementById(
-            'kpi-pred-2026'
-          ).textContent =
-            formatKg(
-              k.pred_2026_annual || 0
-            );
+            'kpi-yearly-trend'
+          );
 
+        trendEl.textContent =
+          k.yearly_trend || '—';
 
+        trendEl.className =
+          'kpi-value ' +
+          (
+            k.yearly_trend === 'RISING'
+              ? 'positive'
+              : k.yearly_trend === 'FALLING'
+                ? 'negative'
+                : 'neutral'
+          );
+
+        const af =
           document.getElementById(
-            'kpi-next-month'
-          ).textContent =
-            formatKg(
-              k.next_month_prediction || 0
-            );
+            'activeFilters'
+          );
 
+        if (af) {
 
-          document.getElementById(
-            'kpi-total-2025'
-          ).textContent =
-            formatKg(
-              k.total_2025 || 0
-            );
-
-
-          const trendEl =
-            document.getElementById(
-              'kpi-yearly-trend'
-            );
-
-
-          trendEl.textContent =
-            k.yearly_trend || '—';
-
-
-          trendEl.className =
-            'kpi-value ' +
-            (
-              k.yearly_trend === 'RISING'
-                ? 'positive'
-                : k.yearly_trend === 'FALLING'
-                  ? 'negative'
-                  : 'neutral'
-            );
-
-
-          const af =
-            document.getElementById(
-              'activeFilters'
-            );
-
-
-          if (af) {
-
-            af.textContent =
-              Dashboard.filters
-                ? 'Filters: ' +
-                  [
-                    'barangay',
-                    'year',
-                    'month',
-                    'wasteType'
-                  ]
-                  .map(
-                    key =>
-                      Dashboard.filters[key] || 'All'
-                  )
-                  .join(' | ')
-                : '';
-
-          }
+          af.textContent =
+            Dashboard.filters
+              ? 'Filters: ' +
+                [
+                  'barangay',
+                  'year',
+                  'month',
+                  'wasteType'
+                ]
+                .map(
+                  key =>
+                    Dashboard.filters[key] || 'All'
+                )
+                .join(' | ')
+              : '';
 
         }
 
       }
 
-    );
-
+    });
   </script>
 
 </body>
 </html>
+
